@@ -1,0 +1,8 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "docker --version 2>/dev/null": true,
+        "minikube": true,
+        "kubectl version": true,
+        "helm": true
+    }
+}

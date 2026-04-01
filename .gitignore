@@ -1,0 +1,20 @@
+# Local secrets and env files
+.env
+.env.*
+!.env.example
+frontend/.env
+frontend/.env.local
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+
+# Node/Next
+node_modules/
+frontend/node_modules/
+frontend/.next/
+frontend/tsconfig.tsbuildinfo
+
+# IDE
+.vscode/

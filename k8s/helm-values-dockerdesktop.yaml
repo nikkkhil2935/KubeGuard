@@ -1,0 +1,14 @@
+prometheus-node-exporter:
+  enabled: false
+grafana:
+  adminPassword: kubeguard123
+  service:
+    type: NodePort
+    nodePort: 30300
+prometheus:
+  service:
+    type: NodePort
+    nodePort: 30090
+alertmanager:
+  alertmanagerSpec:
+    configSecret: alertmanager-config

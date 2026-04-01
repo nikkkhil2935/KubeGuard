@@ -1,0 +1,222 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-gateway
+  namespace: kubeguard
+  labels:
+    app: microservice
+    component: api-gateway
+    team: s8ul
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      component: api-gateway
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: microservice
+        component: api-gateway
+        team: s8ul
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
+        prometheus.io/path: "/metrics"
+    spec:
+      serviceAccountName: kubeguard-controller
+      containers:
+      - name: api-gateway
+        image: kubeguard-api-gateway:latest
+        imagePullPolicy: Never
+        ports:
+        - name: http
+          containerPort: 8000
+        env:
+        - name: SERVICE_NAME
+          value: api-gateway
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: VERSION
+          value: "2.0.0"
+        - name: CORE_SERVICE_URL
+          value: http://core-service:8001
+        - name: WORKER_SERVICE_URL
+          value: http://worker-service:8002
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 3
+          failureThreshold: 2
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 256Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: core-service
+  namespace: kubeguard
+  labels:
+    app: microservice
+    component: core-service
+    team: s8ul
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      component: core-service
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: microservice
+        component: core-service
+        team: s8ul
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8001"
+        prometheus.io/path: "/metrics"
+    spec:
+      serviceAccountName: kubeguard-controller
+      containers:
+      - name: core-service
+        image: kubeguard-core-service:latest
+        imagePullPolicy: Never
+        ports:
+        - name: http
+          containerPort: 8001
+        env:
+        - name: SERVICE_NAME
+          value: core-service
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: VERSION
+          value: "2.0.0"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8001
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8001
+          initialDelaySeconds: 5
+          periodSeconds: 3
+          failureThreshold: 2
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 256Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker-service
+  namespace: kubeguard
+  labels:
+    app: microservice
+    component: worker-service
+    team: s8ul
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      component: worker-service
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: microservice
+        component: worker-service
+        team: s8ul
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8002"
+        prometheus.io/path: "/metrics"
+    spec:
+      serviceAccountName: kubeguard-controller
+      containers:
+      - name: worker-service
+        image: kubeguard-worker-service:latest
+        imagePullPolicy: Never
+        ports:
+        - name: http
+          containerPort: 8002
+        env:
+        - name: SERVICE_NAME
+          value: worker-service
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: VERSION
+          value: "2.0.0"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8002
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8002
+          initialDelaySeconds: 5
+          periodSeconds: 3
+          failureThreshold: 2
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 256Mi

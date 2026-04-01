@@ -1,0 +1,18 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: microservice-monitor
+  namespace: monitoring
+  labels:
+    release: prometheus
+spec:
+  namespaceSelector:
+    matchNames:
+    - kubeguard
+  selector:
+    matchLabels:
+      app: microservice
+  endpoints:
+  - port: http
+    path: /metrics
+    interval: 10s

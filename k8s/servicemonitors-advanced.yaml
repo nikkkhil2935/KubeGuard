@@ -1,0 +1,62 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: api-gateway-sm
+  namespace: monitoring
+  labels:
+    release: prometheus
+    app: microservice
+    team: s8ul
+spec:
+  namespaceSelector:
+    matchNames:
+    - kubeguard
+  selector:
+    matchLabels:
+      component: api-gateway
+  endpoints:
+  - port: http
+    path: /metrics
+    interval: 10s
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: core-service-sm
+  namespace: monitoring
+  labels:
+    release: prometheus
+    app: microservice
+    team: s8ul
+spec:
+  namespaceSelector:
+    matchNames:
+    - kubeguard
+  selector:
+    matchLabels:
+      component: core-service
+  endpoints:
+  - port: http
+    path: /metrics
+    interval: 10s
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: worker-service-sm
+  namespace: monitoring
+  labels:
+    release: prometheus
+    app: microservice
+    team: s8ul
+spec:
+  namespaceSelector:
+    matchNames:
+    - kubeguard
+  selector:
+    matchLabels:
+      component: worker-service
+  endpoints:
+  - port: http
+    path: /metrics
+    interval: 10s

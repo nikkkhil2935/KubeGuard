@@ -1,0 +1,36 @@
+global:
+  resolve_timeout: 1m
+
+route:
+  group_by: [alertname, pod]
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 1h
+  receiver: discord-default
+  routes:
+  - matchers:
+    - severity="critical"
+    receiver: discord-critical
+  - matchers:
+    - alertname="KubeGuardMLAnomaly"
+    receiver: discord-ml
+
+receivers:
+- name: discord-default
+  webhook_configs:
+  - url: https://discord.com/api/webhooks/REPLACE_WITH_DEFAULT_WEBHOOK
+    send_resolved: true
+- name: discord-critical
+  webhook_configs:
+  - url: https://discord.com/api/webhooks/REPLACE_WITH_CRITICAL_WEBHOOK
+    send_resolved: true
+- name: discord-ml
+  webhook_configs:
+  - url: https://discord.com/api/webhooks/REPLACE_WITH_ML_WEBHOOK
+
+inhibit_rules:
+- source_matchers:
+  - alertname="KubeGuardServiceDown"
+  target_matchers:
+  - alertname="KubeGuardPodCrashLoop"
+  equal: [namespace]

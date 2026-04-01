@@ -1,0 +1,42 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: kubeguard-rules
+  namespace: monitoring
+  labels:
+    release: prometheus
+    app: microservice
+    team: s8ul
+spec:
+  groups:
+  - name: kubeguard.alerts
+    rules:
+    - alert: KubeGuardPodCrashLoop
+      expr: rate(kube_pod_container_status_restarts_total{namespace="kubeguard"}[10m]) * 60 > 0.5
+      for: 2m
+      labels:
+        severity: warning
+      annotations:
+        summary: Pod {{ $labels.pod }} is crash-looping
+        description: Restart rate is {{ $value }} per minute
+    - alert: KubeGuardServiceDown
+      expr: kube_deployment_status_available_replicas{namespace="kubeguard"} == 0
+      for: 1m
+      labels:
+        severity: critical
+      annotations:
+        summary: Deployment has zero available replicas
+    - alert: KubeGuardHighMemory
+      expr: (container_memory_usage_bytes{namespace="kubeguard"} / container_spec_memory_limit_bytes{namespace="kubeguard"}) > 0.85
+      for: 3m
+      labels:
+        severity: warning
+      annotations:
+        summary: Memory usage above 85 percent
+    - alert: KubeGuardHPAMaxed
+      expr: kube_horizontalpodautoscaler_status_current_replicas{namespace="kubeguard"} == kube_horizontalpodautoscaler_spec_max_replicas{namespace="kubeguard"}
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: HPA has reached max replicas

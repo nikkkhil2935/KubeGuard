@@ -1,0 +1,41 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: api-gateway-pdb
+  namespace: kubeguard
+  labels:
+    app: microservice
+    team: s8ul
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      component: api-gateway
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: core-service-pdb
+  namespace: kubeguard
+  labels:
+    app: microservice
+    team: s8ul
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      component: core-service
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: worker-service-pdb
+  namespace: kubeguard
+  labels:
+    app: microservice
+    team: s8ul
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      component: worker-service

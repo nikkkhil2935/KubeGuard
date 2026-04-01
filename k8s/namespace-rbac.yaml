@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kubeguard
+  labels:
+    app: microservice
+    team: s8ul
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kubeguard-controller
+  namespace: kubeguard
+  labels:
+    app: microservice
+    team: s8ul
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubeguard-controller
+  labels:
+    app: microservice
+    team: s8ul
+rules:
+- apiGroups: [""]
+  resources: ["pods", "events", "nodes", "configmaps"]
+  verbs: ["get", "list", "watch", "patch", "delete", "create"]
+- apiGroups: ["apps"]
+  resources: ["deployments", "replicasets"]
+  verbs: ["get", "list", "watch", "patch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kubeguard-controller
+  labels:
+    app: microservice
+    team: s8ul
+subjects:
+- kind: ServiceAccount
+  name: kubeguard-controller
+  namespace: kubeguard
+roleRef:
+  kind: ClusterRole
+  name: kubeguard-controller
+  apiGroup: rbac.authorization.k8s.io

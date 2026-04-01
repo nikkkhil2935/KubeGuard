@@ -1,0 +1,60 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+  namespace: kubeguard
+  labels:
+    app: microservice
+    team: s8ul
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-gateway-ingress
+  namespace: kubeguard
+  labels:
+    app: microservice
+    team: s8ul
+spec:
+  podSelector:
+    matchLabels:
+      component: api-gateway
+  policyTypes:
+  - Ingress
+  ingress:
+  - ports:
+    - protocol: TCP
+      port: 8000
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-gateway-to-core-worker
+  namespace: kubeguard
+  labels:
+    app: microservice
+    team: s8ul
+spec:
+  podSelector:
+    matchExpressions:
+    - key: component
+      operator: In
+      values:
+      - core-service
+      - worker-service
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          component: api-gateway
+    ports:
+    - protocol: TCP
+      port: 8001
+    - protocol: TCP
+      port: 8002
