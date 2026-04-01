@@ -58,9 +58,6 @@ This repository supports two operating modes:
 22. [Security Notes](#security-notes)
 23. [Useful Commands](#useful-commands)
 24. [Contributing](#contributing)
-15. [Troubleshooting](#troubleshooting)
-16. [Security Notes](#security-notes)
-17. [Useful Commands](#useful-commands)
 
 ## Architecture Overview
 
@@ -1883,17 +1880,12 @@ curl http://localhost:30081/crash
 curl "http://localhost:30081/api/health-all"
 ```
 
----
+## Contributing
 
-If you want, the next step can be splitting this into:
-- a contributor-focused `CONTRIBUTING.md`
-- a security-focused `SECURITY.md`
-- and per-folder `README.md` docs (`watcher`, `chaos`, `k8s`) for even cleaner navigation.
+Contributions are welcome! Please open an issue or pull request for bug fixes, improvements, or new chaos/remediation scenarios. For significant changes, open an issue first to discuss your approach.
 
 ---
 
 <p align="center">
   <strong>Built with ❤️ by Team S8UL</strong>
-</p>#   K u b e G u a r d 
- 
- 
+</p>
